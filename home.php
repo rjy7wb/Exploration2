@@ -1,0 +1,71 @@
+<?php
+	session_start();
+	include_once 'dbconnect.php';
+	include_once 'functions.php';
+	if(!isset($_SESSION['userID'])){
+		header("Location: index.php");
+	}
+	if(!$res=mysqli_query($link,"SELECT * FROM users WHERE UserID=".$_SESSION['userID'])){
+		die("error" . mysqli_error($link));
+	}
+	$userRow=mysqli_fetch_array($res);
+
+	$firstName	= $userRow['FirstName'];
+	$lastName	= $userRow['LastName'];
+	$userName	= $userRow['UserName'];	
+	$userID		= $userRow['UserID'];
+
+	$_SESSION['firstName'] 	= $firstName;
+	$_SESSION['lastName']	= $lastName;
+	$_SESSION['userName']	= $userName;
+	$_SESSION['userID']	= $userID;
+?>
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<script src="ajax.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="ajax.js"></script>
+		<script>
+			 $(function() {
+                                $("input").draggable();
+                        });
+		</script>
+		<title>Welcome -
+			<?php echo $userRow['UserName']; ?>
+		</title>
+		<link rel="stylesheet" href="style.css" type="text/css" />
+	</head>
+
+	<body>
+		<div id="header">
+			<div id="left">
+				<div id="uploadForm">
+					<form action="upload.php" method="post" enctype="multipart/form-data">
+                        			<p> Select image to upload:</p>
+	                        		<input type="file" name="fileToUpload" id="fileToUpload">
+        	                		<input type="submit" value="Upload Image" name="submit" id="submit">
+                	        	</form>
+	                	</div>
+			</div>
+			<div id="center">
+				<div id="content">
+					<button type="button" onclick="homeContent()">View Your Own Images</button>
+		                        <button type="button" onclick="feedContent()">Explore Other Users Images</button>
+				</div>
+			</div>
+			<div id="right">
+				<div id="welcome">
+					<p> Hello , 
+						<?php echo $firstName . ' ' . $lastName . ' or ' . $userName; ?>&nbsp;
+						<a href="logout.php?logout">Sign Out</a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div id="imgContainer"></div>
+	</body>
+</html>
